@@ -47,7 +47,7 @@
   :group 'epoch-view)
 
 (defvar epoch-view-font-lock-keywords
-  '(("\\<[0-9]\\{8,11\\}\\>"
+  '(("\\<[0-9]\\{8,13\\}\\>"
      (0 (epoch-view-render))))
   "Font-lock keywords of epoch timestamps.")
 
@@ -59,9 +59,12 @@
 
 (defun epoch-view--render-time (text)
   "Render the time portion of an epoch match from TEXT."
-  (format-time-string
-   epoch-view-time-format
-   (seconds-to-time (car (read-from-string (concat text ".0"))))))
+  (let ((time (car (read-from-string (concat text ".0")))))
+    (when (> (length text) 12)
+      (setq time (/ time 1000)))
+    (format-time-string
+     epoch-view-time-format
+     (seconds-to-time time))))
 
 (defun epoch-view--render (text)
   "Render a epoch match from a number in TEXT, ending with TEXT."
